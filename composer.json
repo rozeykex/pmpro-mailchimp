@@ -1,8 +1,8 @@
 {
-  "name": "strangerstudios/pmpro-mailchimp",
-  "description": "Paid Memberships Pro - MailChimp Add On - Sync WordPress Users and PMPro Members with MailChimp lists.",
-  "homepage": "https://github.com/strangerstudios/pmpro-mailchimp",
-  "version": "2.0.2",
+  "name": "rozeykex/pmpro-mailchimp",
+  "description": "Added Composer support to Paid Memberships Pro MailChimp Add On - Syncs WordPress Users and PMPro Members with MailChimp lists.",
+  "homepage": "https://github.com/rozeykex/pmpro-mailchimp",
+  "version": "composer",
   "license": "GPL-2.0",
   "authors": [
     {
