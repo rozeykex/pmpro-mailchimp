@@ -314,57 +314,62 @@ class PMProMailChimp
      */
     public function update_list_member($list_id = null, WP_User $old_user = null, WP_User $new_user = null)
     {
-        $url = self::$api_url . "/lists/{$list_id}/members/" . $this->subscriber_id($old_user->user_email);
+    	$user_subscribed = ( $this->subscriber_id($old_user->user_email) ? true : false );
+    	if ($user_subscribed)
+    	{
+	    	$url = self::$api_url . "/lists/{$list_id}/members/" . $this->subscriber_id($old_user->user_email);
+	
+	        $merge_fields = apply_filters(
+	                            "pmpro_mailchimp_listsubscribe_fields",
+	                            array(
+	                                "FNAME" => $new_user->first_name,
+	                                "LNAME" => $new_user->last_name
+	                            ),
+	                            $new_user
+	                        );
+	        
+	        if ( $old_user->user_email != $new_user->user_email )
+	        {
+	            $retval = true;
+	
+	            $retval = $this->unsubscribe($list_id, $old_user);
+	
+	            // Don't use double opt-in since the user is already subscribed.
+	            $retval = $retval && $this->subscribe($list_id, $new_user, $merge_fields, 'html', false);
+	
+	            if (false === $retval )
+	            {
+	                $this->set_error_msg(__("Error while updating email address for user!", "pmpromc"));
+	            }
+	
+	            return $retval;
+	        }
+    	
 
-        $merge_fields = apply_filters(
-                            "pmpro_mailchimp_listsubscribe_fields",
-                            array(
-                                "FNAME" => $new_user->first_name,
-                                "LNAME" => $new_user->last_name
-                            ),
-                            $new_user
-                        );
+	        // Not trying to change the email address of the user, so we'll attempt to update.
+	        $request = array(
+	            'email_type' => 'html',
+	            'merge_fields' => $merge_fields,
+	        );
 
-        if ( $old_user->user_email != $new_user->user_email )
-        {
-            $retval = true;
+	        $args = array(
+	            'method' => 'PATCH', // Allows us to add or update a user ID
+	            'user-agent' => self::$user_agent,
+	            'timeout' => $this->url_args['timeout'],
+	            'headers' => $this->url_args['headers'],
+	            'body' => $this->encode($request),
+	        );
 
-            $retval = $this->unsubscribe($list_id, $old_user);
-
-            // Don't use double opt-in since the user is already subscribed.
-            $retval = $retval && $this->subscribe($list_id, $new_user, $merge_fields, 'html', false);
-
-            if (false === $retval )
-            {
-                $this->set_error_msg(__("Error while updating email address for user!", "pmpromc"));
-            }
-
-            return $retval;
-        }
-
-        // Not trying to change the email address of the user, so we'll attempt to update.
-        $request = array(
-            'email_type' => 'html',
-            'merge_fields' => $merge_fields,
-        );
-
-        $args = array(
-            'method' => 'PATCH', // Allows us to add or update a user ID
-            'user-agent' => self::$user_agent,
-            'timeout' => $this->url_args['timeout'],
-            'headers' => $this->url_args['headers'],
-            'body' => $this->encode($request),
-        );
-
-        $resp = wp_remote_request($url, $args);
-
-        if ( is_wp_error($resp))
-        {
-            $this->set_error_msg($resp);
-            return false;
-        }
-
+	        $resp = wp_remote_request($url, $args);
+	
+	        if ( is_wp_error($resp))
+	        {
+	            $this->set_error_msg($resp);
+	            return false;
+	        }
         return true;
+    	}
+    	return false;
     }
 
 	/**
