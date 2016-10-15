@@ -334,10 +334,8 @@ class PMProMailChimp
 	            {
 	                $this->set_error_msg(__("Error while updating email address for user!", "pmpromc"));
 	            }
-	
 	            return $retval;
-	        }
-    	
+	        }   	
 
 	        // Not trying to change the email address of the user, so we'll attempt to update.
 	        $request = array(
@@ -360,7 +358,7 @@ class PMProMailChimp
 	            $this->set_error_msg($resp);
 	            return false;
 	        }
-        return true;
+	        return true;
     	}
     	return false;
     }
@@ -439,6 +437,8 @@ class PMProMailChimp
                 }
             }
         }
+=======
+>>>>>>> c5c678f9ff77ff155f6beb701c916ad36974ade5
     }
 
     /**
