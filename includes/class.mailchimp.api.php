@@ -437,8 +437,6 @@ class PMProMailChimp
                 }
             }
         }
-=======
->>>>>>> c5c678f9ff77ff155f6beb701c916ad36974ade5
     }
 
     /**
