@@ -603,7 +603,7 @@ class PMProMailChimp
 
         $msgt = 'error';
 
-	    if ( !is_string($obj) && !is_array($obj) ( 200 !== wp_remote_retrieve_response_code( $obj )) ) {
+	    if ( !is_string($obj) && !is_array($obj) && ( 200 !== wp_remote_retrieve_response_code( $obj )) ) {
 		    $msg = $obj->get_error_message();
         } elseif ( is_string($obj) ) {
             $msg = $obj;
